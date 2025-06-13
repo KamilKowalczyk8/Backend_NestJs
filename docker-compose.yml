@@ -1,0 +1,38 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: match-live-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: meczownik
+      MYSQL_USER: nestjs
+      MYSQL_PASSWORD: nestjspassword
+    ports:
+      - '3306:3306'
+    volumes:
+      - db_data:/var/lib/mysql
+
+  backend:
+    build: .
+    container_name: match-live-backend
+    restart: unless-stopped
+    depends_on:
+     - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USERNAME: nestjs
+      DB_PASSWORD: nestjspassword
+      DB_NAME: meczownik
+    volumes:
+      - .:/app
+      - /app/node_modules
+    working_dir: /app
+    command: nodemon --legacy-watch --exec nest start
+    ports:
+    - '3000:3000'
+
+
+volumes:
+  db_data:
