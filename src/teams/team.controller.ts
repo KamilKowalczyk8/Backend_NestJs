@@ -31,5 +31,18 @@ export class TeamController {
       console.log('Szukana nazwa:', name);
       return this.teamService.findByName(name);
     }
+
+
+    //Pobiera parametry query (liga, okreg) z URL. 
+    //Wywołuje serwis teamService.filterByLigaAndOkreg() w 
+    //celu pobrania drużyn pasujących do kryteriów. 
+    // Zwraca wynik jako listę drużyn (TeamDTO[]).
+    @Get('filter')
+    @ApiOperation({ summary: 'Filtruj drużyny po lidze i okręgu' })
+    @ApiQuery({ name: 'liga', required: true })
+    @ApiQuery({ name: 'okreg', required: true })
+    async filterteam(@Query('liga') liga: string, @Query('okreg') okreg: string): Promise<TeamDTO[]>{
+      return this.teamService.filterByLigaAndOkreg(liga, okreg);
+    }
    
 }

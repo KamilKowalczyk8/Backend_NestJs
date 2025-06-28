@@ -12,13 +12,18 @@ services:
       - '3306:3306'
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost"]
+      interval: 10s
+      retries: 5
 
   backend:
     build: .
     container_name: match-live-backend
     restart: unless-stopped
     depends_on:
-     - db
+      db:
+        condition: service_healthy
     environment:
       DB_HOST: db
       DB_PORT: 3306
@@ -29,10 +34,9 @@ services:
       - .:/app
       - /app/node_modules
     working_dir: /app
-    command: nodemon --legacy-watch --exec nest start
+    command: npm run start:dev
     ports:
-    - '3000:3000'
-
+      - '3000:3000'
 
 volumes:
   db_data:

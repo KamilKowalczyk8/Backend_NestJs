@@ -31,4 +31,12 @@ export class TeamService {
             .getMany();
     }
 
+    async filterByLigaAndOkreg(liga: string, okreg: string): Promise<TeamDTO[]>{
+        return this.teamRepository
+            .createQueryBuilder('team')
+            .where('LOWER(team.liga) = LOWER(:liga)', { liga })
+            .andWhere('LOWER(team.okreg) = LOWER(:okreg)', { okreg })
+            .getMany();
+    }
+
 }

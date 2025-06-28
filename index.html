@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Testowanie API - Drużyny</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #003322;
+      color: white;
+      padding: 20px;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 5px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+    }
+    .region-button {
+      background: #0f4;
+      box-shadow: 2px 2px 5px #002;
+      transition: 0.2s;
+    }
+    .region-button:hover {
+      background: #0c2;
+    }
+    #results {
+      margin-top: 20px;
+      background: white;
+      color: black;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #000;
+    }
+    .team {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    h2 {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Testowanie API Drużyn</h1>
+
+  <div>
+    <button onclick="getAllTeams()">Pobierz wszystkie drużyny</button>
+  </div>
+
+  <div style="margin-top: 20px;">
+    <input type="text" id="searchName" placeholder="Wpisz nazwę drużyny..." />
+    <button onclick="searchTeam()">Szukaj drużyny</button>
+  </div>
+
+  <h2>Okręgówka</h2>
+  <div>
+    <button class="region-button" onclick="filterTeams('Okręgówka', 'Wrocław')">Wrocław</button>
+    <button class="region-button" onclick="filterTeams('Okręgówka', 'Wałbrzych')">Wałbrzych</button>
+    <button class="region-button" onclick="filterTeams('Okręgówka', 'Legnica')">Legnica</button>
+    <button class="region-button" onclick="filterTeams('Okręgówka', 'Jelenia Góra')">Jelenia Góra</button>
+  </div>
+
+  <h2>A-klasa</h2>
+  <div>
+    <button class="region-button" onclick="filterTeams('Klasa A', 'Wrocław')">Wrocław</button>
+    <button class="region-button" onclick="filterTeams('Klasa A', 'Wałbrzych')">Wałbrzych</button>
+    <button class="region-button" onclick="filterTeams('Klasa A', 'Legnica')">Legnica</button>
+    <button class="region-button" onclick="filterTeams('Klasa A', 'Jelenia Góra')">Jelenia Góra</button>
+  </div>
+
+  <div id="results"></div>
+
+  <script>
+    const API_BASE = 'http://localhost:3000';
+
+    async function getAllTeams() {
+      const res = await fetch(`${API_BASE}/teams`);
+      const data = await res.json();
+      displayTeams(data);
+    }
+
+    async function searchTeam() {
+      const name = document.getElementById('searchName').value;
+      if (!name) {
+        alert('Wpisz nazwę drużyny!');
+        return;
+      }
+      const res = await fetch(`${API_BASE}/teams/search?name=${encodeURIComponent(name)}`);
+      const data = await res.json();
+      displayTeams(data);
+    }
+
+    async function filterTeams(liga, okreg) {
+      const res = await fetch(`${API_BASE}/teams/filter?liga=${encodeURIComponent(liga)}&okreg=${encodeURIComponent(okreg)}`);
+      const data = await res.json();
+      displayTeams(data);
+    }
+
+    function displayTeams(teams) {
+        const container = document.getElementById('results');
+        container.innerHTML = '';
+
+ 
+ 
+         teams.forEach(team => {
+            container.innerHTML += `
+            <div class="team">
+                <strong>${team.nazwaDruzyny}</strong> – Liga: ${team.liga}, Okręg: ${team.okreg}
+            </div>
+        `;
+    });
+    }
+  </script>
+</body>
+</html>
