@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from "@nestjs/common";
+import { Controller, Get, NotFoundException, Query } from "@nestjs/common";
 import { TeamService } from "./team.service";
 import { TeamDTO } from "./team.entity";
 
@@ -29,7 +29,13 @@ export class TeamController {
     @ApiQuery({ name: 'name', required: true, description: 'Fragment nazwy drużyny' })
     async searchTeams(@Query('name') name: string): Promise<TeamDTO[]> {
       console.log('Szukana nazwa:', name);
-      return this.teamService.findByName(name);
+      const teams = await this.teamService.findByName(name);
+
+      if (!teams || teams.length === 0) {
+        throw new NotFoundException('Nazwa klubu została niepoprawnie wpisana lub dany klub nie występuje na Dolnym Śląsku');
+      }
+
+      return teams;
     }
 
 
