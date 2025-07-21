@@ -16,12 +16,27 @@ import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 export class TeamController {
     constructor(private readonly teamService: TeamService) {}
     
-
+    
     @Get()
-    @ApiOperation({ summary: 'Wypisywanie wszystkich drużyn ' })
-    @ApiQuery({ name: 'name', required: false, description: 'wszystkie druzyny' })
-    async getAllTeams(): Promise<TeamDTO[]> {
-      return this.teamService.findAll();
+    @ApiOperation({ summary: 'Pobieranie drużyn wraz z opcjonalnym filtorwaniem po nazwie' })
+    @ApiQuery({ name: 'name', required: false})
+    @ApiQuery({ name: 'liga', required: false})
+    @ApiQuery({ name: 'okreg', required: false})
+    async getAllTeams(
+      @Query('name') name?: string,
+      @Query('liga') liga?: string,
+      @Query('okreg') okreg?: string,
+    ): Promise<TeamDTO[]> {
+      //bardzo dokładne filtrowanie po trzech paramentrach
+      if (name && liga && okreg){
+        return this.teamService.filterByNameLigaOkreg(name, liga, okreg);
+      }else if(name) {
+        return this.teamService.findByName(name);
+      }else if (liga && okreg) {
+        return this.teamService.filterByLigaAndOkreg(liga, okreg);
+      }else {
+        return this.teamService.findAll();
+      }
     }
 
     @Get('search')
@@ -51,4 +66,18 @@ export class TeamController {
       return this.teamService.filterByLigaAndOkreg(liga, okreg);
     }
    
+
+    @Get('filter-extended')
+    @ApiOperation({ summary: 'Filtruj drużyny po lidze, okręgu i grupie' })
+    @ApiQuery({ name: 'liga', required: true })
+    @ApiQuery({ name: 'okreg', required: true })
+    @ApiQuery({ name: 'grupa', required: true })
+    async filterTeamWithGroup(
+      @Query('liga') liga: string,
+      @Query('okreg') okreg: string,
+      @Query('grupa') grupa: string
+    ): Promise<TeamDTO[]> {
+      return this.teamService.filterByLigaOkregGrupa(liga, okreg, grupa);
+    }
+
 }

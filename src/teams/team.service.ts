@@ -39,4 +39,26 @@ export class TeamService {
             .getMany();
     }
 
+    async filterByNameLigaOkreg(name: string, liga: string, okreg: string): Promise<TeamDTO[]>{
+        return this.teamRepository
+            .createQueryBuilder('team')
+            .where('LOWER(team.nazwaDruzyny) LIKE LOWER(:name)', { name: `%${name}%` })
+            .andWhere('LOWER(team.liga) = LOWER(:liga)', { liga })
+            .andWhere('LOWER(team.okreg) = LOWER(:okreg)', { okreg })
+            .getMany();
+    }
+
+    async filterByLigaOkregGrupa(
+        liga: string,
+        okreg: string,
+        grupa: string
+    ): Promise<TeamDTO[]> {
+        return this.teamRepository
+            .createQueryBuilder('team')
+            .where('LOWER(team.liga) = LOWER(:liga)', { liga })
+            .andWhere('LOWER(team.okreg) = LOWER(:okreg)', { okreg })
+            .andWhere('LOWER(team.grupa) = LOWER(:grupa)', { grupa })
+            .getMany();
+    }
+
 }
