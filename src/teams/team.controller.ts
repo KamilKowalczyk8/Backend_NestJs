@@ -1,8 +1,8 @@
-import { Controller, Get, NotFoundException, Query } from "@nestjs/common";
+import { Controller, Get, NotFoundException, Param, Query } from "@nestjs/common";
 import { TeamService } from "./team.service";
 import { TeamDTO } from "./team.entity";
 
-import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiQuery, ApiParam } from '@nestjs/swagger';
 
 @ApiTags('teams') 
 //definiuje kontroler w NestJS, 
@@ -78,6 +78,18 @@ export class TeamController {
       @Query('grupa') grupa: string
     ): Promise<TeamDTO[]> {
       return this.teamService.filterByLigaOkregGrupa(liga, okreg, grupa);
+    }
+
+
+    @Get(':id')
+    @ApiOperation({ summary: 'Pobieranie drużyny po jej id' })
+    @ApiParam({ name: 'id', type: Number, description: 'Unikalne Id danej drużyny '})
+    async getTeamById(@Param('id') id:string): Promise<TeamDTO> {
+      const team = await this.teamService.findByOneId(Number(id));
+      if (!team) {
+        throw new NotFoundException(`Drużyna z tym identyfikatorem ${id} nie została znaleziona bądź nie istnieje`);
+      }
+      return team;
     }
 
 }
