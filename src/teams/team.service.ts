@@ -20,6 +20,14 @@ export class TeamService {
         private readonly teamRepository: Repository<TeamDTO>,
     ) {}
 
+
+    async findByOneId(id: number): Promise<TeamDTO | null>{
+        return this.teamRepository
+            .createQueryBuilder('team')
+            .where('team.id  = :id', { id })
+            .getOne();
+    }
+
     async findAll(): Promise<TeamDTO[]> {
         return this.teamRepository.find();
     }
@@ -27,7 +35,7 @@ export class TeamService {
     async findByName(name:string): Promise<TeamDTO[]>{
         return this.teamRepository
             .createQueryBuilder('team')
-            .where('LOWER(team.nazwaDruzyny) LIKE LOWER(:name)', { name: `%${name}%`})
+            .where('LOWER(team.Nazwa) LIKE LOWER(:name)', { name: `%${name}%`})
             .getMany();
     }
 
@@ -42,7 +50,7 @@ export class TeamService {
     async filterByNameLigaOkreg(name: string, liga: string, okreg: string): Promise<TeamDTO[]>{
         return this.teamRepository
             .createQueryBuilder('team')
-            .where('LOWER(team.nazwaDruzyny) LIKE LOWER(:name)', { name: `%${name}%` })
+            .where('LOWER(team.Nazwa) LIKE LOWER(:name)', { name: `%${name}%` })
             .andWhere('LOWER(team.liga) = LOWER(:liga)', { liga })
             .andWhere('LOWER(team.okreg) = LOWER(:okreg)', { okreg })
             .getMany();
@@ -61,4 +69,5 @@ export class TeamService {
             .getMany();
     }
 
+    
 }

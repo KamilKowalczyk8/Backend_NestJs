@@ -1,18 +1,16 @@
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from '@nestjs/swagger';
 
-// Encja Team reprezentuje tabelę druzyny_dolny_slask w MySQL.
-
 @Entity('druzyny_dolny_slask')
 export class TeamDTO {
 
     @PrimaryGeneratedColumn()
     @ApiProperty()
-    Id: number;
+    id: number;
 
     @Column({ name: 'Nazwa', type: 'text' })
     @ApiProperty()
-    nazwaDruzyny: string;
+    Nazwa: string;
 
     @Column({
         type: 'enum',
@@ -38,7 +36,15 @@ export class TeamDTO {
     punkty: number;
 
     @Column({ type: 'int', default: 0 })
-    @ApiProperty({ description: 'Różnica bramek' })
-    roznica: number;
+    @ApiProperty({ description: 'Rozegrane mecze' })
+    rozegrane_mecze: number;
+
+    @Column({ type: 'int', default: 0 })
+    @ApiProperty({ description: 'Strzelone bramki' })
+    strzelone_bramki: number;
+
+    @Column({ type: 'int', default: 0 })
+    @ApiProperty({ description: 'Stracone bramki' })
+    stracone_bramki: number;
 
 }
